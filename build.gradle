@@ -1,0 +1,30 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.tracker.rust'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jersey:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.7'
+	implementation 'org.json:json:20220320'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.7'
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'org.assertj:assertj-core:3.22.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
