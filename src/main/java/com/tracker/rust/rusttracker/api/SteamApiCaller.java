@@ -33,7 +33,7 @@ public class SteamApiCaller {
         }
     }
 
-    private String makeApiCall(String appid, String steamID64) throws Exception{
+    private String makeApiCall(String appid, String steamID64) throws Exception {
 
         ResponseEntity<String> response = restTemplate.exchange(getURi(appid, steamID64), HttpMethod.GET, createHttpEntity(), String.class);
 
