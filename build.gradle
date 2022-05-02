@@ -12,6 +12,12 @@ repositories {
 	mavenCentral()
 }
 
+bootRun{
+	systemProperties = [
+			'spring.config.additional-location' : "file:C:/dev/workspace/git/tracker-config/application-dev.properties"
+	]
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jersey:2.6.7'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'

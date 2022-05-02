@@ -6,17 +6,19 @@ import org.json.JSONObject;
 
 public class RustPlayersStats {
 
-    private String playerStatsKey = "playerstats";
-    private String statsKey = "stats";
-
-    private JSONArray playerStats;
-
+    private int kills;
+    private int deaths;
 
     public RustPlayersStats(JSONObject json){
-        playerStats = (JSONArray) json.getJSONObject(playerStatsKey).get(statsKey);
+        final String playerStatsKey = "playerstats";
+        final String statsKey = "stats";
+        JSONArray playerStats = (JSONArray) json.getJSONObject(playerStatsKey).get(statsKey);
+
+        this.kills = getValueFromPlayerStats(playerStats, RustPlayerStatsConstants.KILL_PLAYER);
+        this.deaths = getValueFromPlayerStats(playerStats, RustPlayerStatsConstants.DEATHS);
     }
 
-    private int getValueFromPlayerStats(String key){
+    private int getValueFromPlayerStats(JSONArray playerStats, String key){
         for(int i = 0; i < playerStats.length(); i++){
             if (playerStats.getJSONObject(i).get("name").equals(key)){
                 return (int) playerStats.getJSONObject(i).get("value");
@@ -26,10 +28,10 @@ public class RustPlayersStats {
     }
 
     public int getPlayerKills(){
-        return getValueFromPlayerStats(RustPlayerStatsConstants.KILL_PLAYER);
+        return kills;
     }
 
     public int getPlayerDeaths(){
-        return getValueFromPlayerStats(RustPlayerStatsConstants.DEATHS);
+        return deaths;
     }
 }

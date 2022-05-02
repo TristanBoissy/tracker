@@ -1,4 +1,4 @@
-package com.tracker.api;
+package com.tracker.service;
 
 import com.tracker.user.stats.RustPlayersStats;
 import org.json.JSONObject;
@@ -16,7 +16,7 @@ import com.tracker.constant.SteamConstants;
 import java.util.Arrays;
 
 @Component
-public class SteamApiCaller {
+public class SteamApiService {
 
     @Value("${steam.api.key}")
     private String steamApiKey;
@@ -27,7 +27,7 @@ public class SteamApiCaller {
         try{
             return new RustPlayersStats(new JSONObject(makeApiCall(appid, steamID64)));
         } catch (Exception e){
-            e.getMessage();
+            e.printStackTrace();
             //TODO
             return null;
         }
