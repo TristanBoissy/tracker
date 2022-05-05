@@ -2,6 +2,11 @@ package com.tracker.constant;
 
 public class RustPlayerStatsConstants {
 
+    public static String PLAYER_PLAYTIME = "playtime_forever";
+    public static String APPID = "appid";
+
+    public static String PLAYER_GAMERTAG = "personaname";
+    public static String PLAYER_IMAGE = "avatarfull";
     public static String DEATHS = "deaths";
     public static String BULLET_FIRED = "bullet_fired";
     public static String ARROW_FIRED = "arrow_fired";
