@@ -4,13 +4,12 @@ import com.tracker.constant.RustPlayerStatsConstants;
 import com.tracker.constant.SteamConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 public class RustPlayersStats {
 
+    private boolean privateProfile;
     private String playerName;
     private String playerImage;
     private String hoursPlayed;
@@ -50,7 +49,8 @@ public class RustPlayersStats {
     private int barrelsDestroyed;
     private int bowFired;
 
-    public RustPlayersStats(JSONObject userGames, JSONObject userInfo, JSONObject userStats){
+    public RustPlayersStats(JSONObject userGames, JSONObject userInfo, JSONObject userStats, boolean privateProfile){
+
         final String playerStatsKey = "playerstats";
         final String statsKey = "stats";
 
@@ -59,17 +59,24 @@ public class RustPlayersStats {
 
         final String playerOwnedgames = "games";
 
-        JSONArray playerInfo = (JSONArray) userInfo.getJSONObject(playerInfoResponse).get(playerInfoPlayers);
-        JSONArray playerStats = (JSONArray) userStats.getJSONObject(playerStatsKey).get(statsKey);
-        JSONArray playerGames = (JSONArray) userGames.getJSONObject(playerInfoResponse).get(playerOwnedgames);
+        initPlayerInfo((JSONObject) userInfo.getJSONObject(playerInfoResponse).get(playerInfoPlayers));
 
-        initVariables(playerGames, (JSONObject) playerInfo.get(0), playerStats);
+        if(!privateProfile){
+            initPlayerStats((JSONArray) userStats.getJSONObject(playerStatsKey).get(statsKey));
+            initPlayerGames((JSONArray) userGames.getJSONObject(playerInfoResponse).get(playerOwnedgames));
+        }
     }
 
-    private void initVariables(JSONArray playerGames, JSONObject playerInfo, JSONArray playerStats){
+    private void initPlayerInfo(JSONObject playerInfo){
         this.playerName = (String) playerInfo.get(RustPlayerStatsConstants.PLAYER_GAMERTAG);
         this.playerImage = (String) playerInfo.get(RustPlayerStatsConstants.PLAYER_IMAGE);
+    }
+
+    private void initPlayerGames(JSONArray playerGames){
         this.hoursPlayed = getHoursPlayedFromPlayerGames(SteamConstants.RUST_APPID, playerGames);
+    }
+
+    private void initPlayerStats(JSONArray playerStats){
 
         this.kills = (int) getValueFromPlayerStats(playerStats, RustPlayerStatsConstants.KILL_PLAYER);
         this.deaths = (int) getValueFromPlayerStats(playerStats, RustPlayerStatsConstants.DEATHS);
@@ -124,6 +131,10 @@ public class RustPlayersStats {
             }
         }
         return -1;
+    }
+
+    public boolean getPrivateProfile(){
+        return this.privateProfile;
     }
 
     public int getKills(){

@@ -1,24 +1,15 @@
 package com.tracker.service;
 
+import com.tracker.constant.SteamConstants;
 import com.tracker.user.stats.RustPlayersStats;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.tracker.constant.SteamConstants;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UriTemplate;
-
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class SteamApiService {
@@ -28,27 +19,26 @@ public class SteamApiService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public RustPlayersStats getUserStats(String appid, String steamID64){
-        try{
-            return new RustPlayersStats(new JSONObject(getPlayerOwnedGames(steamID64)), new JSONObject(getPlayerInfo(steamID64)), new JSONObject(getPlayerStats(appid, steamID64)));
-        } catch (Exception e){
-            e.printStackTrace();
-            //TODO
-            return null;
-        }
+    public RustPlayersStats getUserStats(String appid, String steamID64) {
+
+        JSONObject playerInfo = getPlayerInfo(steamID64);
+        JSONObject playerOwnedGames = getPlayerOwnedGames(steamID64);
+        JSONObject playerStats = getPlayerStats(appid, steamID64);
+
+        return new RustPlayersStats(playerOwnedGames, playerInfo, playerStats, false);
     }
 
-    private String getPlayerOwnedGames(String steamID64) throws Exception {
+    private JSONObject getPlayerOwnedGames(String steamID64) {
 
         ResponseEntity<String> response = restTemplate.exchange(getPlayerOwnedGameURi(steamID64), HttpMethod.GET, createHttpEntity(), String.class);
 
         if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+            return new JSONObject(response.getBody());
 
         } else if (response.getStatusCode().is5xxServerError()){
             // The profile does not share their information
             //TODO return error to display message
-            throw new Exception("The profile is private");
+            return null;
         }
 
         //TODO add other status code errors
@@ -59,33 +49,33 @@ public class SteamApiService {
         return new ArrayList<>();
     }
 
-    private String getPlayerInfo(String steamID64)throws Exception {
+    private JSONObject getPlayerInfo(String steamID64) {
         ResponseEntity<String> response = restTemplate.exchange(getPlayerInformationURi(steamID64), HttpMethod.GET, createHttpEntity(), String.class);
 
         if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+            return new JSONObject(response.getBody());
 
         } else if (response.getStatusCode().is5xxServerError()){
             // The profile does not share their information
             //TODO return error to display message
-            throw new Exception("The profile is private");
+            return null;
         }
 
         //TODO add other status code errors
         return null;
     }
 
-    private String getPlayerStats(String appid, String steamID64) throws Exception {
+    private JSONObject getPlayerStats(String appid, String steamID64) {
 
         ResponseEntity<String> response = restTemplate.exchange(getPlayerStatsURi(appid, steamID64), HttpMethod.GET, createHttpEntity(), String.class);
 
         if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+            return new JSONObject(response.getBody());
 
         } else if (response.getStatusCode().is5xxServerError()){
             // The profile does not share their information
             //TODO return error to display message
-            throw new Exception("The profile is private");
+            return null;
         }
 
         //TODO add other status code errors
